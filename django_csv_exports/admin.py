@@ -10,16 +10,16 @@ from django.utils.translation import ugettext_lazy as _
 
 SHORT_DESCRIPTION = _('Export selected object(s) as CSV file')
 
+
 def export_as_csv(admin_model, request, queryset):
     """
     Generic csv export admin action.
     based on http://djangosnippets.org/snippets/1697/
     """
     # everyone has perms to export as csv unless explicitly defined
-    if getattr(settings, 'DJANGO_EXPORTS_REQUIRE_PERM', None):
-        admin_opts = admin_model.opts
-        codename = '%s_%s' % ('csv', admin_opts.object_name.lower())
-        has_csv_permission = request.user.has_perm("%s.%s" % (admin_opts.app_label, codename))
+    if getattr(settings, 'DJANGO_EXPORTS_REQUIRE_PERM', False):
+        codename = '%s_%s' % ('csv', admin_model.opts.object_name.lower())
+        return request.user.has_perm("%s.%s" % (admin_model.opts.app_label, codename))
     else:
         has_csv_permission = admin_model.has_csv_permission(request) \
             if (hasattr(admin_model, 'has_csv_permission') and callable(getattr(admin_model, 'has_csv_permission'))) \
@@ -65,10 +65,9 @@ class CSVExportAdminMixin(object):
         all staff users can use this action unless `DJANGO_EXPORTS_REQUIRE_PERM`
         is set to True in your django settings.
         """
-        if getattr(settings, 'DJANGO_EXPORTS_REQUIRE_PERM', None):
-            opts = self.opts
-            codename = '%s_%s' % ('csv', opts.object_name.lower())
-            return request.user.has_perm("%s.%s" % (opts.app_label, codename))
+        if getattr(settings, 'DJANGO_EXPORTS_REQUIRE_PERM', False):
+            codename = '%s_%s' % ('csv', self.opts.object_name.lower())
+            return request.user.has_perm("%s.%s" % (self.opts.app_label, codename))
         return True
 
 
