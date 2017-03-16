@@ -18,6 +18,9 @@ setup(
     author='Victor Rocha',
     author_email='victor@rochapps.com',
     packages=find_packages(),
+    install_requires=[
+        'unicodecsv',
+    ],
     include_package_data=True,
     url='https://github.com/victor-rocha/django-csv-exports',
     license='BSD',

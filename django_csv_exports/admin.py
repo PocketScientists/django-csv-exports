@@ -1,6 +1,6 @@
-import csv
 
 import django
+import unicodecsv as csv
 from django.conf import settings
 from django.contrib import admin
 from django.http import HttpResponse, HttpResponseForbidden
