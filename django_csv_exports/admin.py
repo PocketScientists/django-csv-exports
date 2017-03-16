@@ -44,9 +44,9 @@ def export_as_csv(admin_model, request, queryset):
 export_as_csv.short_description = "Export selected objects as csv file"
 
 
-class CSVExportAdmin(admin.ModelAdmin):
+class CSVExportAdminMixin(object):
     def get_actions(self, request):
-        actions = super(CSVExportAdmin, self).get_actions(request)
+        actions = super(CSVExportAdminMixin, self).get_actions(request)
         if self.has_csv_permission(request):
             actions['export_as_csv'] = (export_as_csv, 'export_as_csv', "Export selected objects as csv file")
         return actions
@@ -65,5 +65,10 @@ class CSVExportAdmin(admin.ModelAdmin):
         return True
 
 
-if getattr(settings, 'DJANGO_CSV_GLOBAL_EXPORTS_ENABLED', True):
+class CSVExportAdmin(CSVExportAdminMixin, admin.ModelAdmin):
+    pass
+
+
+# register global action
+if getattr(settings, 'DJANGO_CSV_GLOBAL_EXPORTS_ENABLED', False):
     admin.site.add_action(export_as_csv)
