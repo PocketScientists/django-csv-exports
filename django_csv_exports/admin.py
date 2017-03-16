@@ -1,11 +1,14 @@
+from builtins import str as text
 
 import django
 import unicodecsv as csv
 from django.conf import settings
 from django.contrib import admin
 from django.http import HttpResponse, HttpResponseForbidden
-from builtins import str as text
+from django.utils.translation import ugettext_lazy as _
 
+
+SHORT_DESCRIPTION = _('Export selected object(s) as CSV file')
 
 def export_as_csv(admin_model, request, queryset):
     """
@@ -41,14 +44,18 @@ def export_as_csv(admin_model, request, queryset):
             writer.writerow([text(getattr(obj, field)).encode("utf-8", "replace") for field in field_names])
         return response
     return HttpResponseForbidden()
-export_as_csv.short_description = "Export selected objects as csv file"
+export_as_csv.short_description = SHORT_DESCRIPTION
 
 
 class CSVExportAdminMixin(object):
     def get_actions(self, request):
         actions = super(CSVExportAdminMixin, self).get_actions(request)
         if self.has_csv_permission(request):
-            actions['export_as_csv'] = (export_as_csv, 'export_as_csv', "Export selected objects as csv file")
+            actions['export_as_csv'] = (
+                export_as_csv,
+                'export_as_csv',
+                SHORT_DESCRIPTION
+            )
         return actions
 
     def has_csv_permission(self, request, obj=None):
