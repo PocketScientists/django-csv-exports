@@ -35,10 +35,10 @@ Configuration
 There are two django settings that you can use to configure who can use the export action::
 
     # Use if you want to check user level permissions only users with the can_csv_<model_label>
-    # will be able to download csv files.
+    # will be able to download csv files (default: False).
     DJANGO_EXPORTS_REQUIRE_PERM = True
-    # Use if you want to disable the global django admin action. This setting is set to True by default.
-    DJANGO_CSV_GLOBAL_EXPORTS_ENABLED = False
+    # Use if you want to disable the global django admin action (default: False).
+    DJANGO_CSV_GLOBAL_EXPORTS_ENABLED = True
 
 
 Fields to export
