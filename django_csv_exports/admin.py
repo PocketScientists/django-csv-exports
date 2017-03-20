@@ -28,6 +28,20 @@ def get_value(admin_model, instance, field_name):
     return text(value)
 
 
+def get_header(admin_model, field_names):
+    """
+    Returns a list of strings for the column headers.
+
+    Uses the fields' `short_description` attribute if available or falls back
+    to the attribute name.
+    """
+    return [
+        getattr(getattr(admin_model, fn, None), 'short_description', fn)
+        for fn
+        in field_names
+    ]
+
+
 def get_fieldnames(admin_model):
     # use field names from specific ModelAdmin configuration
     if getattr(admin_model, MODEL_ADMIN_FIELDNAMES, None):
@@ -36,7 +50,7 @@ def get_fieldnames(admin_model):
         # fallback to Modeladmin.fields
         field_names = [field.name for field in admin_model.model._meta.fields]
         field_names.sort()
-    return field_names
+    return list(field_names)
 
 
 def set_content_disposition(response, admin_model, filename=None):
@@ -87,7 +101,7 @@ def export_as_csv(admin_model, request, queryset):
         response = get_response(admin_model)
 
         writer = csv.writer(response, encoding='utf-8')
-        writer.writerow(list(field_names))
+        writer.writerow(get_header(admin_model, field_names))
         for obj in queryset:
             writer.writerow([
                 get_value(admin_model, obj, field)
