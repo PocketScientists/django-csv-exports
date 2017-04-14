@@ -18,8 +18,11 @@ setup(
     author='Victor Rocha',
     author_email='victor@rochapps.com',
     packages=find_packages(),
+    install_requires=[
+        'unicodecsv',
+    ],
     include_package_data=True,
-    url='https://github.com/victor-rocha/django-csv-exports',
+    url='https://github.com/fdemmer/django-csv-exports',
     license='BSD',
     description=u' '.join(__import__('django_csv_exports').__doc__.splitlines()).strip(),
     classifiers=[
@@ -28,6 +31,7 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.5',
         'Framework :: Django',
         'Development Status :: 4 - Beta',
         'Operating System :: OS Independent',
