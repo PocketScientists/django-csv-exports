@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 MODEL_ADMIN_FIELDNAMES = 'csv_fields'
 MODEL_ADMIN_FILENAME = 'csv_filename'
+MODEL_ADMIN_ENCODING = 'csv_encoding'
 
 SHORT_DESCRIPTION = _('Export selected object(s) as CSV file')
 
@@ -65,6 +66,10 @@ def set_content_disposition(response, admin_model, filename=None):
     response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
 
 
+def get_encoding(admin_model, default='utf8'):
+    return getattr(admin_model, MODEL_ADMIN_ENCODING, default)
+
+
 def get_response(admin_model):
     content_type_name = 'content_type'
     #TODO extended support for 1.5 ended in sept 2014, remove this
@@ -99,8 +104,9 @@ def export_as_csv(admin_model, request, queryset):
     if has_csv_permission(admin_model, request):
         field_names = get_fieldnames(admin_model)
         response = get_response(admin_model)
+        encoding = get_encoding(admin_model)
 
-        writer = csv.writer(response, encoding='utf-8')
+        writer = csv.writer(response, encoding=encoding)
         writer.writerow(get_header(admin_model, field_names))
         for obj in queryset:
             writer.writerow([
